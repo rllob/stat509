@@ -1,0 +1,3 @@
+# keep the published site to the built files
+*.Rhistory
+.RData

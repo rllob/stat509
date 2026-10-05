@@ -1,0 +1,14 @@
+# GitHub Pages site for the STAT 509 quizzes (repo rllob/stat509 -> https://rllob.github.io/stat509/)
+# Rebuild after adding or rebuilding a quiz:  Rscript build_site.R   (then commit and push)
+title: "STAT509"
+subtitle: "Introduction to Mathematical Statistics, Autumn 2026: practice quizzes"
+note: "Spaced-repetition practice. Progress is saved in this browser. Built from the course study guides; no homework answers."
+sections:
+  - heading: "Week 1: probability foundations"
+    quizzes:
+      - bank: ../stat509/problem_sets/W1/quiz/W1_quiz.yaml
+        file: w1.html
+  - heading: "Calculus self-test"
+    quizzes:
+      - bank: ../stat509/problem_sets/selftest/quiz/selftest_quiz.yaml
+        file: selftest.html
