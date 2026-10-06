@@ -2,7 +2,8 @@
 ### STAT509 site: copy built quizzes + write index.html (GitHub Pages, repo rllob/stat509)
 ### Usage (from this folder): Rscript build_site.R
 ###   reads site.yaml; for each quiz: copies <bank>.html (built by quiz-deck/build_quiz.R) to
-###   quizzes/<file>, reads the bank for title / question count / topics; writes index.html
+###   quizzes/<file>, reads the bank for title / question count / topics; for each deck: copies
+###   its one-file HTML to decks/<file> (adding a noindex tag); writes index.html
 ### ----------------------------------------- ##
 
 suppressPackageStartupMessages({ library(yaml); library(jsonlite) })
@@ -12,6 +13,8 @@ here <- dirname(normalizePath(sub("^--file=", "", grep("^--file=", fa, value = T
 setwd(here)
 S <- read_yaml("site.yaml")
 dir.create("quizzes", showWarnings = FALSE)
+dir.create("decks", showWarnings = FALSE)
+n_dk <- 0
 
 esc <- function(s) { s <- gsub("&", "&amp;", s, fixed = TRUE); s <- gsub("<", "&lt;", s, fixed = TRUE); gsub(">", "&gt;", s, fixed = TRUE) }
 cards <- list(); meta <- list()
@@ -32,6 +35,19 @@ for (sec in S$sections) {
       q$file, esc(bank$quiz$title), esc(bank$quiz$subtitle %||% ""), nq, paste(esc(topics), collapse = " &middot; "),
       bank$quiz$id, nq))
     cat(sprintf("  %-14s %3d questions  <- %s\n", q$file, nq, html_src))
+  }
+  # Animated decks (manim-deck one-file HTML): copy into decks/ with a noindex tag added
+  for (d in sec$decks) {
+    if (!file.exists(d$src)) stop("deck not found: ", d$src, call. = FALSE)
+    x <- readChar(d$src, file.size(d$src), useBytes = TRUE)
+    if (!grepl("name=\"robots\"", x, fixed = TRUE))
+      x <- sub("<head>", "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\">", x, fixed = TRUE, useBytes = TRUE)
+    con <- file(file.path("decks", d$file), open = "wb"); writeChar(x, con, eos = NULL, useBytes = TRUE); close(con)
+    n_dk <- n_dk + 1
+    items <- c(items, sprintf(
+      '<a class="quiz deck" href="decks/%s"><div class="qt"><span class="tag">Slides</span>%s</div><div class="qs">%s</div><div class="qn">Animated deck &middot; &rarr; to step &middot; F full screen &middot; %.0f MB</div></a>',
+      d$file, esc(d$title), esc(d$sub %||% ""), file.size(d$src) / 1e6))
+    cat(sprintf("  %-18s deck  %5.1f MB  <- %s\n", d$file, file.size(d$src) / 1e6, d$src))
   }
   cards[[length(cards) + 1]] <- paste0("<h2>", esc(sec$heading), "</h2>", paste(items, collapse = ""))
 }
@@ -56,6 +72,7 @@ a.quiz:active{transform:scale(.995)}
 .qt{font-weight:650;font-size:18px}.qs{color:var(--muted);font-size:14.5px;margin-top:2px}
 .qn{font-size:13px;color:var(--muted);margin-top:8px}
 .prog{margin-top:10px;font-size:13px;color:var(--ok)}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--chip);color:var(--accent);border-radius:6px;padding:1px 7px;margin-right:8px;vertical-align:2px}
 .bar{height:6px;background:var(--chip);border-radius:4px;overflow:hidden;margin-top:4px}.bar>div{height:100%;background:var(--ok)}
 footer{color:var(--muted);font-size:12.5px;margin-top:28px}
 </style></head><body><div class="wrap">
@@ -74,4 +91,4 @@ document.querySelectorAll(".prog").forEach(function (el) {
 </script></body></html>')
 con <- file("index.html", open = "w", encoding = "UTF-8"); writeLines(html, con); close(con)
 if (!file.exists(".nojekyll")) file.create(".nojekyll")      # serve files as-is (no Jekyll processing)
-cat("OK  index.html with", length(meta), "quizzes\n")
+cat("OK  index.html with", length(meta), "quizzes and", n_dk, "decks\n")
