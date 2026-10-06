@@ -1,0 +1,2 @@
+# Built quizzes and decks are self-contained HTML (base64 media): store them byte-for-byte
+*.html -text
