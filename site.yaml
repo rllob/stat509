@@ -2,16 +2,20 @@
 # Rebuild after adding or rebuilding a quiz or deck:  Rscript build_site.R   (then commit and push)
 # quizzes: bank = the quiz-deck YAML (its built .html sits next to it); file = name under quizzes/
 # decks:   src = the deck's one-file offline .html (manim-deck); file = name under decks/
-# Public site: no homework answers (decks that work assigned problems stay local until after the due date).
+# Public site. Ramses chose (2026-10-06) to publish everything, including material that works HW problems.
 title: "STAT509"
 subtitle: "Introduction to Mathematical Statistics, Autumn 2026: practice quizzes and animated slides"
-note: "Quizzes use spaced repetition; progress is saved in this browser. Slides: press → to step, F for full screen. Built from the course study guides; no homework answers."
+note: "Quizzes use spaced repetition; progress is saved in this browser. Slides: press → to step, F for full screen. Built from my course study guides."
 sections:
   - heading: "Week 1: probability foundations"
     quizzes:
       - bank: ../stat509/problem_sets/W1/quiz/W1_quiz.yaml
         file: w1.html
     decks:
+      - src: ../stat509/problem_sets/W1/media/events/events.html
+        file: w1_events.html
+        title: "Events as areas"
+        sub: "Inclusion–exclusion, Bonferroni, feasible ranges, exclusive vs independent, HW1 Problems 1 and 3"
       - src: ../stat509/problem_sets/W1/media/sampling/sampling.html
         file: w1_sampling.html
         title: "At least one: sampling without replacement"

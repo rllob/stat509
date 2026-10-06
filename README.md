@@ -8,5 +8,4 @@ the browser. Slides: press → to step, F for full screen.
 Live page: https://rllob.github.io/stat509/
 
 Quizzes are generated with a quiz-deck pipeline (YAML question banks → `build_quiz.R`), decks
-with Manim Slides, and this index with `build_site.R` from `site.yaml`. They contain concepts and
-practice examples only, no homework solutions.
+with Manim Slides, and this index with `build_site.R` from `site.yaml`.
